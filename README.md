@@ -8,11 +8,11 @@ Some of these utilities were done with [AutoIt3][autoit].
 List of utilities
 -----------------
 
-### GetText
+### AutoGetText
 
 Parse your HTML templates, PHP Files and/or Javascript Files to find all the strings to translate and create the related .pot file.
 
-### GetText JS
+### AutoGetText JS
 
 Generate a Mootools dictionnary from your non-compiled translation files (.po) and your Javascript Files. (Feel free to fork it to make it compatible with other JS librairies).
 
