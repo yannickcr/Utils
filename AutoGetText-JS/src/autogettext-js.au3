@@ -1,7 +1,7 @@
 #NoTrayIcon
 #include <Array.au3>
 
-$ver = '1.0.4'
+$ver = '1.0.5'
 
 _EnableConsole()
 
@@ -65,7 +65,7 @@ Else
 		displayHelp()
 	EndIf
 	If($kFound==False) Then
-		$k = "MooTools.lang.get\('([a-zA-Z0-9-_ ]+)', '([a-zA-Z0-9-_ ]+)'\)"
+		$k = "Locale.get\('([a-zA-Z0-9-_ ]+)\.([a-zA-Z0-9-_ ]+)'\)"
 	EndIf
 	If($lFound==False) Then
 		displayHelp()
@@ -134,7 +134,7 @@ Else
 				$template = StringTrimRight($template,2)
 				$template &= @LF & '});' & @LF & @LF
 			EndIf
-			$template &= "MooTools.lang.set('" & $c & "', '" & $cascade[1] & "', {" & @LF
+			$template &= "Locale.define('" & $c & "', '" & $cascade[1] & "', {" & @LF
 			$lastSet = $cascade[1]
 		EndIf
 		
@@ -164,7 +164,7 @@ Func displayHelp()
 	ConsoleWrite('	-o	Output file' & @CRLF)
 	ConsoleWrite('	-d	Directory to search (current directory by default)' & @CRLF)
 	ConsoleWrite('	-i	File filter (*.js by default)' & @CRLF)
-	ConsoleWrite("	-k	Search mask, $key$ is the string to translate and $set$ his package (Mootools.lang.get('$set$','$key$') by default)" & @CRLF)
+	ConsoleWrite("	-k	Search mask, $key$ is the string to translate and $set$ his package (Locale.get('$set$.$key$') by default)" & @CRLF)
 	ConsoleWrite('	-l	Language file' & @CRLF)
 	ConsoleWrite('	-c	Language code (en-US by default)' & @CRLF)
 	ConsoleWrite('	-debug	Debug mode' & @CRLF & @CRLF)
