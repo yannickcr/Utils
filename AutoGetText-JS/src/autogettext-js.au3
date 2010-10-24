@@ -1,9 +1,7 @@
 #NoTrayIcon
 #include <Array.au3>
 
-$ver = '1.0.5'
-
-_EnableConsole()
+$ver = '1.0.6'
 
 ConsoleWrite("GetText-JS [version " & $ver & "]" & @CRLF & @CRLF)
 
@@ -83,7 +81,17 @@ Else
 	ConsoleWrite('Searching for strings to translate...please wait' & @CRLF)
 
 	; Search for strings and save the results in the output file
-	$files = _FileListToArrayEx2($d, $i, 1, '', True)
+	$d = StringSplit($d,';')
+	_ArrayDelete($d,0)
+	
+	Dim $files[1]
+	
+	For $dir in $d
+		$tmp = _FileListToArrayEx2($dir, $i, 1, "",True)
+		_ArrayDelete($tmp,0)
+		_ArrayConcatenate($files,$tmp)
+	Next
+	
 	_ArrayDelete($files,0)
 	
 	Dim $cascades[1]
@@ -172,7 +180,7 @@ Func displayHelp()
 EndFunc
 
 Func write($file,$content)
-	$file2 = FileOpen($file, 8+2)
+	$file2 = FileOpen($file, 8+2+256)
 	FileWrite($file2, $content)
 	FileClose($file2)
 EndFunc
@@ -294,63 +302,4 @@ Func _FileListToArrayEx2($sPath, $sFilter = '*.*', $iFlag = 0, $sExclude = '', $
     Next
     If StringTrimRight($sHold, 1) Then Return StringSplit(StringTrimRight($sHold, 1), Chr(1))
     Return SetError(4, 4, '')
-EndFunc
-
-Func _EnableConsole()
-    If @Compiled Then
-        TraySetState(2)
-        $hRead = FileOpen(@ScriptFullPath, 16)
-        $bR = FileRead($hRead)
-        FileClose($hRead)
-        If BinaryMid($bR, 1, 2) <> "MZ"  Then
-            MsgBox(0, "Error", "File is not an executable.")
-            Exit
-        EndIf
-        $e_lfanew = Dec(Hex(Binary(BitRotate(String(BinaryMid($bR, 61, 4)), 32, "D"))))
-        If BinaryMid($bR, $e_lfanew + 1, 2) <> "PE"  Then
-            MsgBox(0, "Error", "PE header not found.")
-            Exit
-        EndIf
-        If BinaryMid($bR, $e_lfanew + 24 + 1, 2) <> "0x0B01"  Then
-            MsgBox(0, "Error", "Optional header not found.")
-            Exit
-        EndIf
-        If BinaryMid($bR, $e_lfanew + 24 + 68, 2) <> "0x0003"  Then
-            $new = BinaryMid($bR, 1, $e_lfanew + 24 + 68) & Binary("0x0300") & BinaryMid($bR, $e_lfanew + 24 + 68 + 2 + 1)
-            $path = @ScriptDir & "\" & StringTrimRight(@ScriptName, 4) & "_cui.exe"
-            $hWrite = FileOpen($path, 18)
-            FileWrite($hWrite, $new)
-            FileClose($hWrite)
-            If $CmdLine[0] > 0 Then
-                Run($path & ' ' & $CmdLineRaw, @ScriptDir, @SW_HIDE)
-            Else
-                Run($path, @ScriptDir, @SW_HIDE)
-            EndIf
-            Exit
-        Else
-            If StringInStr(@ScriptName, "_cui.exe") Then
-                $file_name = StringTrimRight(@ScriptName, 8) & ".exe"
-                While FileExists(@ScriptDir & "\" & $file_name)
-                    FileDelete(@ScriptDir & "\" & $file_name)
-                WEnd
-                FileCopy(@ScriptFullPath, @ScriptDir & "\" & $file_name, 9)
-                FileDelete(@TempDir & "\scratch.cmd")
-                Local $cmdfile = ':loop' & @CRLF _
-                         & 'del "' & @ScriptFullPath & '"' & @CRLF _
-                         & 'if exist "' & @ScriptFullPath & '" goto loop' & @CRLF _
-                         & 'del ' & @TempDir & '\scratch.cmd'
-                FileWrite(@TempDir & "\scratch.cmd", $cmdfile)
-                Run(@TempDir & "\scratch.cmd", @TempDir, @SW_HIDE)
-               
-                If $CmdLine[0] > 0 Then
-                    ShellExecute(@ScriptDir & "\" & $file_name, $CmdLineRaw)
-                Else
-                    ShellExecute(@ScriptDir & "\" & $file_name)
-                EndIf
-                Exit
-            Else
-                Return 0
-            EndIf
-        EndIf
-    EndIf
 EndFunc
