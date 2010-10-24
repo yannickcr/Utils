@@ -1,3 +1,3 @@
 @echo off
-"../bin/autogettext.exe" -o test.pot -debug
+"../bin/autogettext-x86.exe" -o test.pot -debug
 pause;

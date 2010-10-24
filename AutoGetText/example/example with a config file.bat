@@ -1,3 +1,3 @@
 @echo off
-"../bin/autogettext.exe" -c config.ini
+"../bin/autogettext-x86.exe" -c config.ini
 pause;
